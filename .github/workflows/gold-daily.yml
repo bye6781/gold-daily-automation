@@ -91,7 +91,8 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           if [ -f auto_daily/price_history.json ]; then
             cp auto_daily/price_history.json auto_daily/price_history.json.bak
-            git add auto_daily/price_history.json
+            git add -f auto_daily/price_history.json
             git commit -m "🤖 更新黄金历史价格数据 [skip ci]" || echo "无变化"
             git push || echo "推送失败（可能需要配置 workflow permissions）"
           fi
+
