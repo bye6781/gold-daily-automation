@@ -1,5 +1,5 @@
 /**
- * é»„é‡‘æ–‡ç« ç”Ÿæˆå™¨ v3.0 â€” Node.js ç‰ˆ
+ * »Æ½ğÎÄÕÂÉú³ÉÆ÷ v3.1 ¡ª WeChat ÄÚÁªÑùÊ½°æ
  */
 import fs from "fs";
 import path from "path";
@@ -22,35 +22,34 @@ for (const [key, val] of Object.entries(data)) {
 }
 
 const defaults = {
-  "TITLE_SUFFIX": "é»„é‡‘èµ°åŠ¿è¿æ¥å…³é”®èŠ‚ç‚¹",
-  "RSI_VALUE": "å¾…ç›˜ä¸­æ›´æ–°",
-  "RSI_STATUS": "å¾…ç›˜ä¸­æ›´æ–°",
-  "WEEKLY_ANALYSIS": "è¯·å…ˆè¿è¡Œ fetch_data.mjs ç§¯ç´¯å†å²æ•°æ®",
-  "DAILY_ANALYSIS": "è¯·å…ˆè¿è¡Œ fetch_data.mjs ç§¯ç´¯å†å²æ•°æ®",
-  "TECH_SUMMARY": "é»„é‡‘èµ°åŠ¿çŸ­æœŸè¶‹åŠ¿æœªåè½¬ï¼Œä½†è¶…å–åŒºåŸŸæ„å‘³ç€æŠ€æœ¯æ€§åå¼¹æ¡ä»¶æ­£åœ¨ç§¯ç´¯ã€‚",
-  "FED_ANALYSIS": "ç¾è”å‚¨6æœˆç»´æŒåˆ©ç‡ä¸å˜ï¼Œé‡Šæ”¾é¹°æ´¾ä¿¡å·ã€‚é«˜åˆ©ç‡ç¯å¢ƒä½¿æŒæœ‰é»„é‡‘çš„æœºä¼šæˆæœ¬å±…é«˜ä¸ä¸‹ã€‚",
-  "CB_ANALYSIS": "å…¨çƒå¤®è¡Œè´­é‡‘æ„æ„¿ç»´æŒé«˜ä½ï¼Œä¸ºé‡‘ä»·æä¾›äº†ç»“æ„æ€§åº•éƒ¨æ”¯æ’‘ã€‚",
-  "GEO_ANALYSIS": "åœ°ç¼˜é£é™©æº¢ä»·çš„é˜¶æ®µæ€§æ”¶ç¼©æ˜¯è¿‘æœŸé‡‘ä»·å›è°ƒçš„å‚¬åŒ–å‰‚ä¹‹ä¸€ï¼Œä½†ä¸ç¡®å®šæ€§è¿œæœªæ¶ˆé™¤ã€‚",
-  "SUPPORT_LEVELS": "æ•°æ®ç§¯ç´¯ä¸­",
-  "RESISTANCE_LEVELS": "æ•°æ®ç§¯ç´¯ä¸­",
-  "DXY_RANGE": "103-104",
-  "USDCNY": "7.10",
-"USDCNY": "7.10",
-  "BIAS_DIRECTION": "å¾…ç›˜ä¸­æ›´æ–°ï¼Œè¯·è¿è¡Œ fetch_data.mjs åé‡æ–°ç”Ÿæˆ",
-  "BIAS_REASON": "å¾…ç›˜ä¸­æ›´æ–°",
-  "BIAS_RANGE": "å¾…ç›˜ä¸­æ›´æ–°",
-  "BIAS_STRATEGY": "å¾…ç›˜ä¸­æ›´æ–°",
-  "FED_IMPACT": "å¾…ç›˜ä¸­æ›´æ–°",
-  "GEO_FOCUS": "å¾…ç›˜ä¸­æ›´æ–°",
-  "DXY_VALUE": "å¾…ç›˜ä¸­æ›´æ–°",
-  "DXY_IMPACT": "å¾…ç›˜ä¸­æ›´æ–°",
-  "MA5_VALUE": "æ•°æ®ç§¯ç´¯ä¸­",
-  "MA10_VALUE": "æ•°æ®ç§¯ç´¯ä¸­",
-  "MA20_VALUE": "æ•°æ®ç§¯ç´¯ä¸­ï¼ˆéœ€20ä¸ªäº¤æ˜“æ—¥ï¼‰",
-  "MA_ALIGNMENT": "æ•°æ®ç§¯ç´¯ä¸­",
-  "PRICE_VS_MA20": "æ•°æ®ç§¯ç´¯ä¸­ï¼ŒMA20 éœ€ 20 ä¸ªäº¤æ˜“æ—¥ã€‚è¯·è¿ç»­è¿è¡Œ fetch_data.mjsã€‚",
-  "RANGE_20D_LOW": "æ•°æ®ç§¯ç´¯ä¸­",
-  "RANGE_20D_HIGH": "æ•°æ®ç§¯ç´¯ä¸­",
+  TITLE_SUFFIX: "»Æ½ğ×ßÊÆÓ­À´¹Ø¼ü½Úµã",
+  RSI_VALUE: "´ıÅÌÖĞ¸üĞÂ",
+  RSI_STATUS: "´ıÅÌÖĞ¸üĞÂ",
+  WEEKLY_ANALYSIS: "ÇëÏÈÔËĞĞ fetch_data.mjs »ıÀÛÀúÊ·Êı¾İ",
+  DAILY_ANALYSIS: "ÇëÏÈÔËĞĞ fetch_data.mjs »ıÀÛÀúÊ·Êı¾İ",
+  TECH_SUMMARY: "»Æ½ğ×ßÊÆ¶ÌÆÚÇ÷ÊÆÎ´·´×ª£¬µ«³¬ÂôÇøÓòÒâÎ¶×Å¼¼ÊõĞÔ·´µ¯Ìõ¼şÕıÔÚ»ıÀÛ¡£",
+  FED_ANALYSIS: "ÃÀÁª´¢6ÔÂÎ¬³ÖÀûÂÊ²»±ä£¬ÊÍ·ÅÓ¥ÅÉĞÅºÅ¡£¸ßÀûÂÊ»·¾³Ê¹³ÖÓĞ»Æ½ğµÄ»ú»á³É±¾¾Ó¸ß²»ÏÂ¡£",
+  CB_ANALYSIS: "È«ÇòÑëĞĞ¹º½ğÒâÔ¸Î¬³Ö¸ßÎ»£¬Îª½ğ¼ÛÌá¹©ÁË½á¹¹ĞÔµ×²¿Ö§³Å¡£",
+  GEO_ANALYSIS: "µØÔµ·çÏÕÒç¼ÛµÄ½×¶ÎĞÔÊÕËõÊÇ½üÆÚ½ğ¼Û»Øµ÷µÄ´ß»¯¼ÁÖ®Ò»£¬µ«²»È·¶¨ĞÔÔ¶Î´Ïû³ı¡£",
+  SUPPORT_LEVELS: "Êı¾İ»ıÀÛÖĞ",
+  RESISTANCE_LEVELS: "Êı¾İ»ıÀÛÖĞ",
+  DXY_RANGE: "103-104",
+  USDCNY: "7.10",
+  BIAS_DIRECTION: "´ıÅÌÖĞ¸üĞÂ",
+  BIAS_REASON: "´ıÅÌÖĞ¸üĞÂ",
+  BIAS_RANGE: "´ıÅÌÖĞ¸üĞÂ",
+  BIAS_STRATEGY: "´ıÅÌÖĞ¸üĞÂ",
+  FED_IMPACT: "´ıÅÌÖĞ¸üĞÂ",
+  GEO_FOCUS: "´ıÅÌÖĞ¸üĞÂ",
+  DXY_VALUE: "´ıÅÌÖĞ¸üĞÂ",
+  DXY_IMPACT: "´ıÅÌÖĞ¸üĞÂ",
+  MA5_VALUE: "Êı¾İ»ıÀÛÖĞ",
+  MA10_VALUE: "Êı¾İ»ıÀÛÖĞ",
+  MA20_VALUE: "Êı¾İ»ıÀÛÖĞ£¨Ğè20¸ö½»Ò×ÈÕ£©",
+  MA_ALIGNMENT: "Êı¾İ»ıÀÛÖĞ",
+  PRICE_VS_MA20: "Êı¾İ»ıÀÛÖĞ",
+  RANGE_20D_LOW: "Êı¾İ»ıÀÛÖĞ",
+  RANGE_20D_HIGH: "Êı¾İ»ıÀÛÖĞ",
 };
 
 for (const [k, v] of Object.entries(defaults)) {
@@ -62,106 +61,176 @@ article = article.replace(/\\n/g, "\n");
 const today = new Date().toISOString().slice(0, 10).replace(/-/g, "");
 const outDir = path.join(__dirname, "..", "daily_output");
 fs.mkdirSync(outDir, { recursive: true });
-const mdPath = path.join(outDir, "é»„é‡‘æ–‡ç« _" + today + ".md");
-fs.writeFileSync(mdPath, article, "utf-8");
-console.log("MD:", mdPath);
+
+// ===== Inline style helpers =====
+const S = {
+  h1: 'style="font-size:22px;text-align:center;color:#1a1a1a;margin:10px 0 20px;font-weight:700"',
+  h2: 'style="font-size:18px;margin:28px 0 14px;padding-left:12px;border-left:4px solid #c8963e;color:#2c3e50;font-weight:600"',
+  h3: 'style="font-size:16px;margin:20px 0 10px;color:#34495e;font-weight:600"',
+  p: 'style="margin:10px 0;color:#3a3a3a;font-size:15px;line-height:1.85"',
+  bq: 'style="background:#fef9f0;border-left:4px solid #c8963e;padding:12px 16px;margin:16px 0;color:#6b5a3e;font-size:14px;line-height:1.8"',
+  hr: 'style="border:none;border-top:1px solid #eee;margin:28px 0"',
+  li: 'style="margin:6px 0;color:#3a3a3a;font-size:15px;line-height:1.85;padding-left:4px"',
+  card: 'style="background:linear-gradient(160deg,#0f1923,#1a2740);border-radius:14px;padding:28px 20px;margin:24px 0;box-shadow:0 4px 20px rgba(0,0,0,.25)"',
+  cardH3: 'style="text-align:center;color:#e2b04a;font-size:17px;margin:0 0 16px;padding:0 0 12px;border-bottom:1px solid rgba(226,176,74,.2);font-weight:600;letter-spacing:2px"',
+  tbl: 'style="width:100%;border-collapse:collapse;font-size:13px;margin:0"',
+  th: 'style="background:rgba(226,176,74,.12);color:#e2b04a;padding:10px 6px;font-size:12px;text-align:center;border-bottom:2px solid rgba(226,176,74,.25)"',
+  td: 'style="padding:10px 6px;text-align:center;border-bottom:1px solid rgba(255,255,255,.06);color:#d5dbe3;font-size:13px"',
+  tdL: 'style="padding:10px 6px;text-align:left;color:#b0bac8;font-weight:500;font-size:12px;border-bottom:1px solid rgba(255,255,255,.06)"',
+  tdPv: 'style="padding:10px 6px;text-align:center;color:#fff;font-weight:700;font-size:14px;border-bottom:1px solid rgba(255,255,255,.06)"',
+  tdTime: 'style="padding:10px 6px;text-align:center;color:#8899aa;font-size:11px;border-bottom:1px solid rgba(255,255,255,.06)"',
+  up: 'style="background:rgba(0,200,130,.15);color:#00e676;font-weight:700;border-radius:6px;padding:3px 10px;font-size:13px;display:inline-block"',
+  down: 'style="background:rgba(255,70,70,.15);color:#ff5252;font-weight:700;border-radius:6px;padding:3px 10px;font-size:13px;display:inline-block"',
+  flat: 'style="color:#7b8a9b;font-size:13px"',
+  time: 'style="text-align:center;margin-top:14px;font-size:12px;color:#7b8a9b;padding-top:10px;border-top:1px solid rgba(255,255,255,.04)"',
+  footer: 'style="text-align:center;color:#999;font-size:13px;margin-top:30px;padding-top:20px;border-top:1px solid #eee"',
+  tags: 'style="text-align:center;margin-top:16px"',
+  tag: 'style="display:inline-block;background:#fef9f0;color:#b8860b;padding:4px 12px;border-radius:20px;font-size:13px;margin:4px"',
+};
+
+function inl(s) { return ' ' + S[s]; }
+
 // ===== Price Card 1: International Metals =====
-const si = data.SILVER_PRICE ? ("$" + data.SILVER_PRICE) : "â€”";
-const pd = data.PALLADIUM_PRICE ? ("$" + data.PALLADIUM_PRICE) : "â€”";
-const pt = data.PLATINUM_PRICE ? ("$" + data.PLATINUM_PRICE) : "â€”";
-const gc = data.SPOT_CHANGE.startsWith("-") ? "price-down" : data.SPOT_CHANGE.startsWith("+") ? "price-up" : "price-flat";
-const sc = data.SILVER_CHANGE.startsWith("-") ? "price-down" : data.SILVER_CHANGE.startsWith("+") ? "price-up" : "price-flat";
+const si = data.SILVER_PRICE ? ("$" + data.SILVER_PRICE) : "¡ª";
+const pd = data.PALLADIUM_PRICE ? ("$" + data.PALLADIUM_PRICE) : "¡ª";
+const pt = data.PLATINUM_PRICE ? ("$" + data.PLATINUM_PRICE) : "¡ª";
+const gcTag = data.SPOT_CHANGE.startsWith("-") ? "down" : data.SPOT_CHANGE.startsWith("+") ? "up" : "flat";
+const scTag = data.SILVER_CHANGE.startsWith("-") ? "down" : data.SILVER_CHANGE.startsWith("+") ? "up" : "flat";
 
 const priceCard1 = [
-  "<div class=\"price-card\">",
-  "<h3>ğŸŒ å›½é™…è´µé‡‘å±è¡Œæƒ…</h3>",
-  "<table class=\"price-tbl\"><thead><tr><th>å“ç§</th><th>æœ€æ–°ä»·</th><th>æ¶¨è·Œå¹…åº¦</th><th>æœ€é«˜ä»·</th><th>æœ€ä½ä»·</th><th>æŠ¥ä»·æ—¶é—´</th></tr></thead><tbody>",
-  "<tr><td>XAU/USD å›½é™…é»„é‡‘</td><td class=\"pv\">$" + data.SPOT_PRICE + "</td><td class=\"" + gc + "\">" + data.SPOT_CHANGE + "</td><td>$" + data.DAY_HIGH + "</td><td>$" + data.DAY_LOW + "</td><td rowspan=\"4\" class=\"pt\">" + data.QUOTE_TIME + "</td></tr>",
-  "<tr><td>XAG/USD å›½é™…é“¶ä»·</td><td class=\"pv\">" + si + "</td><td class=\"" + sc + "\">" + data.SILVER_CHANGE + "</td><td>" + (data.SILVER_HIGH ? ("$" + data.SILVER_HIGH) : "â€”") + "</td><td>" + (data.SILVER_LOW ? ("$" + data.SILVER_LOW) : "â€”") + "</td></tr>",
-  "<tr><td>XPD/USD å›½é™…é’¯é‡‘</td><td class=\"pv\">" + pd + "</td><td class=\"price-flat\">â€”</td><td>" + (data.PD_HIGH ? ("$" + data.PD_HIGH) : "â€”") + "</td><td>" + (data.PD_LOW ? ("$" + data.PD_LOW) : "â€”") + "</td></tr>",
-  "<tr><td>XPT/USD å›½æ ‡é“‚é‡‘</td><td class=\"pv\">" + pt + "</td><td class=\"price-flat\">â€”</td><td>" + (data.PT_HIGH ? ("$" + data.PT_HIGH) : "â€”") + "</td><td>" + (data.PT_LOW ? ("$" + data.PT_LOW) : "â€”") + "</td></tr>",
-  "</tbody></table>",
-  "<div class=\"price-time\">â± æ•°æ®æ¥æºï¼šé‡‘åæ•°æ® (jin10.com) &amp; COMEX (cmegroup.com)</div>",
-  "</div>"
+  '<div' + inl("card") + '>',
+  '<h3' + inl("cardH3") + '>?? ¹ú¼Ê¹ó½ğÊôĞĞÇé</h3>',
+  '<table' + inl("tbl") + '>',
+  '<thead><tr><th' + inl("th") + '>Æ·ÖÖ</th><th' + inl("th") + '>×îĞÂ¼Û</th><th' + inl("th") + '>ÕÇµø·ù</th><th' + inl("th") + '>×î¸ß</th><th' + inl("th") + '>×îµÍ</th></tr></thead>',
+  '<tbody>',
+  '<tr><td' + inl("tdL") + '>XAU/USD ¹ú¼Ê»Æ½ğ</td><td' + inl("tdPv") + '>$' + data.SPOT_PRICE + '</td><td' + inl("td") + '><span' + inl(gcTag) + '>' + data.SPOT_CHANGE + '</span></td><td' + inl("td") + '>$' + data.DAY_HIGH + '</td><td' + inl("td") + '>$' + data.DAY_LOW + '</td></tr>',
+  '<tr><td' + inl("tdL") + '>XAG/USD ¹ú¼ÊÒø¼Û</td><td' + inl("tdPv") + '>' + si + '</td><td' + inl("td") + '><span' + inl(scTag) + '>' + data.SILVER_CHANGE + '</span></td><td' + inl("td") + '>' + (data.SILVER_HIGH ? ("$" + data.SILVER_HIGH) : "¡ª") + '</td><td' + inl("td") + '>' + (data.SILVER_LOW ? ("$" + data.SILVER_LOW) : "¡ª") + '</td></tr>',
+  '<tr><td' + inl("tdL") + '>XPD/USD ¹ú¼ÊîÙ½ğ</td><td' + inl("tdPv") + '>' + pd + '</td><td' + inl("td") + '><span' + inl("flat") + '>¡ª</span></td><td' + inl("td") + '>' + (data.PD_HIGH ? ("$" + data.PD_HIGH) : "¡ª") + '</td><td' + inl("td") + '>' + (data.PD_LOW ? ("$" + data.PD_LOW) : "¡ª") + '</td></tr>',
+  '<tr><td' + inl("tdL") + '>XPT/USD ¹ú±ê²¬½ğ</td><td' + inl("tdPv") + '>' + pt + '</td><td' + inl("td") + '><span' + inl("flat") + '>¡ª</span></td><td' + inl("td") + '>' + (data.PT_HIGH ? ("$" + data.PT_HIGH) : "¡ª") + '</td><td' + inl("td") + '>' + (data.PT_LOW ? ("$" + data.PT_LOW) : "¡ª") + '</td></tr>',
+  '</tbody></table>',
+  '<div' + inl("time") + '>? Êı¾İ£º½ğÊ®Êı¾İ &amp; COMEX | ' + data.QUOTE_TIME + '</div>',
+  '</div>'
 ].join("\n");
 
 // ===== Price Card 2: Domestic Prices =====
 const priceCard2 = [
-  "<div class=\"price-card\">",
-  "<h3>ğŸ‡¨ğŸ‡³ å›½å†…é‡‘ä»·è¡Œæƒ…</h3>",
-  "<table class=\"price-tbl\"><thead><tr><th>å“ç§</th><th>æœ€æ–°ä»·</th><th>æ¶¨è·Œå¹…åº¦</th><th>æœ€é«˜ä»·</th><th>æœ€ä½ä»·</th><th>æŠ¥ä»·æ—¶é—´</th></tr></thead><tbody>",
-  "<tr><td>å›½å†…é‡‘ä»·</td><td class=\"pv\">" + data.DOMESTIC_GOLD + " å…ƒ/å…‹</td><td class=\"price-flat\">â€”</td><td>â€”</td><td>â€”</td><td rowspan=\"4\" class=\"pt\">" + data.QUOTE_TIME + "</td></tr>",
-  "<tr><td>å›½å†…é“¶ä»·</td><td class=\"pv\">" + data.DOMESTIC_SILVER + " å…ƒ/å…‹</td><td class=\"price-flat\">â€”</td><td>â€”</td><td>â€”</td></tr>",
-  "<tr><td>æŠ•èµ„é‡‘æ¡</td><td class=\"pv\">" + data.INVEST_BAR + " å…ƒ/å…‹</td><td class=\"price-flat\">â€”</td><td>â€”</td><td>â€”</td></tr>",
-  "<tr><td>é»„é‡‘å›æ”¶</td><td class=\"pv\">" + data.RECOVERY_PRICE + " å…ƒ/å…‹</td><td class=\"price-flat\">â€”</td><td>â€”</td><td>â€”</td></tr>",
-  "<tr><td>å·¥å•†é“¶è¡ŒÂ·ç§¯å­˜é‡‘</td><td class=\"pv\">" + (data.BANK_ICBC || "â€”") + " å…ƒ/å…‹</td><td class=\"price-flat\">â€”</td><td>â€”</td><td>â€”</td><td>â€”</td></tr>",
-  "<tr><td>å»ºè®¾é“¶è¡ŒÂ·ç§¯å­˜é‡‘</td><td class=\"pv\">" + (data.BANK_CCB || "â€”") + " å…ƒ/å…‹</td><td class=\"price-flat\">â€”</td><td>â€”</td><td>â€”</td><td>â€”</td></tr>",
-  "<tr><td>å†œä¸šé“¶è¡ŒÂ·ç§¯å­˜é‡‘</td><td class=\"pv\">" + (data.BANK_ABC || "â€”") + " å…ƒ/å…‹</td><td class=\"price-flat\">â€”</td><td>â€”</td><td>â€”</td><td>â€”</td></tr>",
-  "<tr><td>ä¸­å›½é“¶è¡ŒÂ·ç§¯å­˜é‡‘</td><td class=\"pv\">" + (data.BANK_BOC || "â€”") + " å…ƒ/å…‹</td><td class=\"price-flat\">â€”</td><td>â€”</td><td>â€”</td><td>â€”</td></tr>",
-  "<tr><td>æ‹›å•†é“¶è¡ŒÂ·ç§¯å­˜é‡‘</td><td class=\"pv\">" + (data.BANK_CMB || "â€”") + " å…ƒ/å…‹</td><td class=\"price-flat\">â€”</td><td>â€”</td><td>â€”</td><td>â€”</td></tr>",
-  "<tr><td>äº¤é€šé“¶è¡ŒÂ·ç§¯å­˜é‡‘</td><td class=\"pv\">" + (data.BANK_COMM || "â€”") + " å…ƒ/å…‹</td><td class=\"price-flat\">â€”</td><td>â€”</td><td>â€”</td><td>â€”</td></tr>",
-  "<tr><td>å…´ä¸šé“¶è¡ŒÂ·ç§¯å­˜é‡‘</td><td class=\"pv\">" + (data.BANK_CIB || "â€”") + " å…ƒ/å…‹</td><td class=\"price-flat\">â€”</td><td>â€”</td><td>â€”</td><td>â€”</td></tr>",
-  "</tbody></table>",
-  "<div class=\"price-time\">ğŸ’¡ ç§¯å­˜é‡‘ä»·æ ¼å‚è€ƒå„è¡Œå®˜ç½‘ï¼Œå®é™…ä»¥æŸœå°ä¸ºå‡†ã€‚å›æ”¶ä»·å‚è€ƒè¶³é‡‘999</div>",
-  "</div>"
+  '<div' + inl("card") + '>',
+  '<h3' + inl("cardH3") + '>???? ¹úÄÚ½ğ¼ÛĞĞÇé</h3>',
+  '<table' + inl("tbl") + '>',
+  '<thead><tr><th' + inl("th") + '>Æ·ÖÖ</th><th' + inl("th") + '>×îĞÂ¼Û</th><th' + inl("th") + '>µ¥Î»</th></tr></thead>',
+  '<tbody>',
+  '<tr><td' + inl("tdL") + '>¹úÄÚ½ğ¼Û</td><td' + inl("tdPv") + '>' + data.DOMESTIC_GOLD + ' Ôª/¿Ë</td><td' + inl("td") + '>ÈËÃñ±Ò</td></tr>',
+  '<tr><td' + inl("tdL") + '>¹úÄÚÒø¼Û</td><td' + inl("tdPv") + '>' + data.DOMESTIC_SILVER + ' Ôª/¿Ë</td><td' + inl("td") + '>ÈËÃñ±Ò</td></tr>',
+  '<tr><td' + inl("tdL") + '>Í¶×Ê½ğÌõ</td><td' + inl("tdPv") + '>' + data.INVEST_BAR + ' Ôª/¿Ë</td><td' + inl("td") + '>½ğµê»ù´¡¼Û</td></tr>',
+  '<tr><td' + inl("tdL") + '>»Æ½ğ»ØÊÕ</td><td' + inl("tdPv") + '>' + data.RECOVERY_PRICE + ' Ôª/¿Ë</td><td' + inl("td") + '>×ã½ğ999²Î¿¼</td></tr>',
+  '<tr><td' + inl("tdL") + '>Æ·ÅÆ½ğÊÎ</td><td' + inl("tdPv") + '>' + data.JEWELRY_PRICE + ' Ôª/¿Ë</td><td' + inl("td") + '>º¬Æ·ÅÆÒç¼Û</td></tr>',
+  '</tbody></table>',
+  '<div' + inl("time") + '>?? »ØÊÕ¼Û¸ñµÍÓÚÊµÊ±½ğ¼Û1%-3%ÊôÕı³£ÕÛ¼Û</div>',
+  '</div>'
 ].join("\n");
 
-// ===== Combine =====
-const priceCards = priceCard1 + "\n" + priceCard2;
+// ===== Price Card 3: Bank Savings Gold =====
+const banks = [
+  ["¹¤ÉÌÒøĞĞ", data.BANK_ICBC], ["½¨ÉèÒøĞĞ", data.BANK_CCB], ["Å©ÒµÒøĞĞ", data.BANK_ABC],
+  ["ÖĞ¹úÒøĞĞ", data.BANK_BOC], ["ÕĞÉÌÒøĞĞ", data.BANK_CMB], ["½»Í¨ÒøĞĞ", data.BANK_COMM],
+  ["ĞËÒµÒøĞĞ", data.BANK_CIB]
+];
 
-// ===== Generate HTML =====
-const marker = "<!--PRICE_CARDS-->";
-const markerIdx = article.indexOf(marker);
-let articleHtml;
-if (markerIdx > 0) {
-  const before = article.substring(0, markerIdx);
-  const after = article.substring(markerIdx + marker.length);
-  articleHtml = mdToHtml(before) + "\n" + priceCards + "\n" + mdToHtml(after);
-} else {
-  articleHtml = priceCards + "\n" + mdToHtml(article);
-}
+const bankRows = banks.map(([name, price]) =>
+  '<tr><td' + inl("tdL") + '>' + name + ' »ı´æ½ğ</td><td' + inl("tdPv") + '>' + (price || "¡ª") + ' Ôª/¿Ë</td><td' + inl("td") + '>1¿ËÆğÍ¶</td></tr>'
+).join("\n");
 
-function mdToHtml(md) {
+const priceCard3 = [
+  '<div' + inl("card") + '>',
+  '<h3' + inl("cardH3") + '>?? ÒøĞĞ»ı´æ½ğ±¨¼Û</h3>',
+  '<table' + inl("tbl") + '>',
+  '<thead><tr><th' + inl("th") + '>ÒøĞĞ</th><th' + inl("th") + '>»ı´æ½ğ¼Û¸ñ</th><th' + inl("th") + '>ÃÅ¼÷</th></tr></thead>',
+  '<tbody>',
+  bankRows,
+  '</tbody></table>',
+  '<div' + inl("time") + '>?? ¸÷ÒøĞĞ»ı´æ½ğ¼Û¸ñÒÔÍøµãÊµÊ±±¨¼ÛÎª×¼</div>',
+  '</div>'
+].join("\n");
+
+const priceCards = priceCard1 + "\n" + priceCard2 + "\n" + priceCard3;
+
+// ===== Convert MD to WeChat-compatible HTML with inline styles =====
+function mdToWechatHtml(md) {
   const lines = md.split("\n");
   let h = "";
+  let inTable = false;
   for (const line of lines) {
     const t = line.trimEnd();
-    if (/^### (.+)/.test(t)) { h += "<h3>" + t.match(/^### (.+)/)[1] + "</h3>\n"; continue; }
-    if (/^## (.+)/.test(t)) { h += "<h2>" + t.match(/^## (.+)/)[1] + "</h2>\n"; continue; }
-    if (/^# (.+)/.test(t)) { h += "<h1>" + t.match(/^# (.+)/)[1] + "</h1>\n"; continue; }
-    if (/^---$/.test(t)) { h += "<hr>\n"; continue; }
+    if (!t) { if (inTable) { h += "</table>\n"; inTable = false; } continue; }
+
+    // Headings
+    if (/^### (.+)/.test(t)) { h += "<h3 " + S.h3.slice(7, -1) + ">" + t.match(/^### (.+)/)[1] + "</h3>\n"; continue; }
+    if (/^## (.+)/.test(t)) { h += "<h2 " + S.h2.slice(7, -1) + ">" + t.match(/^## (.+)/)[1] + "</h2>\n"; continue; }
+    if (/^# (.+)/.test(t)) { h += "<h1 " + S.h1.slice(7, -1) + ">" + t.match(/^# (.+)/)[1] + "</h1>\n"; continue; }
+
+    // HR
+    if (/^---$/.test(t)) { h += "<hr " + S.hr.slice(7, -1) + ">\n"; continue; }
+
+    // Blockquote
     if (/^> (.+)/.test(t)) {
-      h += "<blockquote>" + t.replace(/^> /, "").replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>") + "</blockquote>\n";
+      h += "<blockquote " + S.bq.slice(7, -1) + ">" + t.replace(/^> /, "").replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>") + "</blockquote>\n";
       continue;
     }
+
+    // Table
     if (/^\|.*\|$/.test(t)) {
-      if (/^[\|\s\-:]+$/.test(t)) continue;
-      const cells = t.split("|").filter(c => c).map(c => "<td>" + c.trim().replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>") + "</td>").join("");
+      if (/^[\|\s\-:]+$/.test(t)) { inTable = true; continue; }
+      if (!inTable) {
+        h += '<table style="width:100%;border-collapse:collapse;font-size:14px;margin:16px 0">\n';
+        inTable = true;
+      }
+      const cells = t.split("|").filter(c => c).map(c => '<td style="padding:8px;border:1px solid #e0e0e0;text-align:center;font-size:14px">' + c.trim().replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>") + "</td>").join("");
       h += "<tr>" + cells + "</tr>\n";
       continue;
     }
+    if (inTable) { h += "</table>\n"; inTable = false; }
+
+    // List items
     if (/^- (.+)/.test(t)) {
-      h += "<li>" + t.replace(/^- /, "").replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>") + "</li>\n";
+      h += "<li " + S.li.slice(7, -1) + ">" + t.replace(/^- /, "").replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>") + "</li>\n";
       continue;
     }
+
+    // Tags
     if (/^#/.test(t) && /[\u4e00-\u9fff]/.test(t)) {
-      const tags = t.split(/\s+/).filter(x => x.startsWith("#")).map(x => '<span class="tag">' + x + '</span>').join("");
-      if (tags) h += '<div class="tags">' + tags + "</div>\n";
+      const tags = t.split(/\s+/).filter(x => x.startsWith("#")).map(x => '<span ' + S.tag.slice(7, -1) + '>' + x + '</span>').join("");
+      if (tags) h += '<div ' + S.tags.slice(7, -1) + '>' + tags + "</div>\n";
       continue;
     }
-    if (/^\s*$/.test(t)) continue;
+
+    // Regular paragraph
     let p = t.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
-    if (/^\*.*\*$/.test(p)) h += '<p class="footer">' + p.replace(/^\*|\*$/g, "") + "</p>\n";
-    else h += "<p>" + p + "</p>\n";
+    if (/^\*.*\*$/.test(p)) h += '<p ' + S.footer.slice(7, -1) + '>' + p.replace(/^\*|\*$/g, "") + "</p>\n";
+    else h += '<p ' + S.p.slice(7, -1) + '>' + p + "</p>\n";
   }
+  if (inTable) h += "</table>\n";
   return h;
 }
 
-const style = '<style>\n*{margin:0;padding:0;box-sizing:border-box}\nbody{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;background:#f0f2f5;color:#2c3e50;line-height:1.85;font-size:16px}\n.article{max-width:680px;margin:0 auto;background:#fff;padding:28px 20px 48px;box-shadow:0 2px 12px rgba(0,0,0,.06)}\nh1{font-size:21px;text-align:center;margin-bottom:18px;color:#1a1a1a}\nh2{font-size:18px;margin:30px 0 14px;padding-left:12px;border-left:4px solid #c8963e;color:#2c3e50}\nh3{font-size:16px;margin:22px 0 10px;color:#34495e}\np{margin:10px 0;color:#3a3a3a}\nblockquote{background:#fef9f0;border-left:4px solid #c8963e;padding:12px 16px;margin:16px 0;color:#6b5a3e;font-size:15px}\n\n/* === Price Cards - Professional Dark === */\n.price-card{background:linear-gradient(160deg,#0f1923,#1a2740);border-radius:14px;padding:24px 28px;margin:24px 0;color:#e8ecf1;box-shadow:0 4px 20px rgba(0,0,0,.25);border:1px solid rgba(200,150,62,.12)}\n.price-card h3{color:#e2b04a;font-size:17px;margin:0 0 18px;padding:0 0 12px;border:none;text-align:center;letter-spacing:3px;border-bottom:1px solid rgba(226,176,74,.15);font-weight:600}\n\n.price-tbl{width:100%;border-collapse:collapse;font-size:14px;margin:0}\n.price-tbl thead th{background:rgba(226,176,74,.12);color:#e2b04a;padding:10px 8px;font-size:12px;font-weight:500;text-align:center;border-bottom:2px solid rgba(226,176,74,.25);letter-spacing:1px}\n.price-tbl tbody td{padding:11px 8px;text-align:center;border-bottom:1px solid rgba(255,255,255,.06);color:#d5dbe3;font-size:14px}\n.price-tbl tbody tr:nth-child(even){background:rgba(255,255,255,.025)}\n.price-tbl tbody tr:hover{background:rgba(226,176,74,.06)}\n.price-tbl td:first-child{text-align:left;color:#b0bac8;font-weight:500;white-space:nowrap;font-size:13px}\n.price-tbl td.pv{color:#ffffff;font-weight:700;font-size:15px;letter-spacing:.5px;text-shadow:0 0 20px rgba(255,255,255,.1)}\n.price-tbl td.pt{color:#8899aa;font-size:12px;vertical-align:middle;line-height:1.4}\n\n.price-up{background:rgba(0,200,130,.15);color:#00e676;font-weight:700;border-radius:6px;padding:2px 10px !important;font-size:13px}\n.price-down{background:rgba(255,70,70,.15);color:#ff5252;font-weight:700;border-radius:6px;padding:2px 10px !important;font-size:13px}\n.price-flat{color:#7b8a9b;font-size:13px}\n\n.price-time{text-align:center;margin-top:14px;font-size:12px;color:#7b8a9b;padding-top:10px;border-top:1px solid rgba(255,255,255,.04)}\n\n.footer{text-align:center;color:#999;font-size:14px;margin-top:36px;padding-top:22px;border-top:1px solid #eee}\n.tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px}\n.tag{background:#fef9f0;color:#b8860b;padding:4px 12px;border-radius:20px;font-size:13px}\nhr{border:none;border-top:1px solid #eee;margin:28px 0}\n</style>';
+let articleHtml = priceCards + "\n" + mdToWechatHtml(article);
 
+// Remove the <!--PRICE_CARDS--> placeholder
+articleHtml = articleHtml.replace("<!--PRICE_CARDS-->", "");
 
-const html = '<!DOCTYPE html>\n<html lang="zh-CN">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n<title>é»„é‡‘ä»·æ ¼ä»Šæ—¥é‡‘ä»·æ·±åº¦åˆ†æ</title>\n' + style + '\n</head>\n<body><div class="article">\n' + articleHtml + '\n</div></body></html>';
-const htmlPath = path.join(outDir, "é»„é‡‘æ–‡ç« _" + today + ".html");
-fs.writeFileSync(htmlPath, html, "utf-8");
+// Write MD file
+const mdPath = path.join(outDir, "»Æ½ğÎÄÕÂ_" + today + ".md");
+fs.writeFileSync(mdPath, article, "utf-8");
+console.log("MD:", mdPath);
+
+// Write WeChat HTML (no html/head/body wrapper ¡ª just article content)
+const wechatHtml = articleHtml;
+const htmlPath = path.join(outDir, "»Æ½ğÎÄÕÂ_" + today + ".html");
+fs.writeFileSync(htmlPath, wechatHtml, "utf-8");
 console.log("HTML:", htmlPath);
+
+// Also output a preview version (full HTML for browser viewing)
+const previewHtml = '<!DOCTYPE html>\n<html lang="zh-CN">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n<title>»Æ½ğ¼Û¸ñ½ñÈÕ½ğ¼ÛÉî¶È·ÖÎö</title>\n<style>\nbody{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;background:#f0f2f5;line-height:1.85;font-size:16px;padding:20px;max-width:680px;margin:0 auto}\n</style>\n</head>\n<body>\n' + wechatHtml + '\n</body></html>';
+const previewPath = path.join(outDir, "»Æ½ğÎÄÕÂ_" + today + "_preview.html");
+fs.writeFileSync(previewPath, previewHtml, "utf-8");
+console.log("Ô¤ÀÀ:", previewPath);
 console.log("=== OK ===");
