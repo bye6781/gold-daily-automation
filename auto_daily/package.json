@@ -1,0 +1,15 @@
+{
+  "name": "gold-daily-automation",
+  "version": "3.0.0",
+  "description": "技术析金 - 黄金日更文章自动化",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "fetch": "node fetch_data.mjs",
+    "generate": "node generate_article.mjs",
+    "full": "node fetch_data.mjs && node generate_article.mjs"
+  },
+  "dependencies": {
+    "playwright": "^1.40.0"
+  }
+}

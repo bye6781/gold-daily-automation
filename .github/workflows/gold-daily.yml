@@ -1,0 +1,97 @@
+﻿name: 黄金日更文章生成
+
+on:
+  schedule:
+    # 北京时间每个交易日 08:00 (UTC 00:00, 周一到周五)
+    - cron: '0 0 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      push_draft:
+        description: '是否推送至公众号草稿箱'
+        type: boolean
+        default: false
+
+env:
+  TZ: Asia/Shanghai
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 安装 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: auto_daily/package.json
+
+      - name: 安装依赖
+        working-directory: auto_daily
+        run: npm ci
+
+      - name: 安装 Playwright 浏览器
+        working-directory: auto_daily
+        run: |
+          npx playwright install chromium
+          npx playwright install-deps chromium
+
+      - name: 创建输出目录
+        run: mkdir -p daily_output
+
+      - name: 第1步：抓取数据
+        working-directory: auto_daily
+        run: node fetch_data.mjs
+
+      - name: 第2步：生成文章
+        working-directory: auto_daily
+        run: node generate_article.mjs
+
+      - name: 归档文章文件
+        uses: actions/upload-artifact@v4
+        with:
+          name: gold-article-${{ github.run_id }}
+          path: |
+            daily_output/*.md
+            daily_output/*.html
+            auto_daily/latest_data.json
+          retention-days: 7
+
+      - name: 推送至公众号草稿箱（可选）
+        if: ${{ github.event.inputs.push_draft == 'true' }}
+        env:
+          WX_APPID: ${{ secrets.WX_APPID }}
+          WX_APPSECRET: ${{ secrets.WX_APPSECRET }}
+        working-directory: auto_daily
+        run: |
+          echo "正在获取 access_token..."
+          TOKEN=$(curl -s "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=$WX_APPID&secret=$WX_APPSECRET" | jq -r '.access_token')
+          if [ -z "$TOKEN" ] || [ "$TOKEN" = "null" ]; then
+            echo "获取 access_token 失败，跳过推送"
+            exit 0
+          fi
+          ARTICLE=$(find ../daily_output -name "*.html" -type f | sort -r | head -1)
+          TITLE="黄金价格今日金价深度分析"
+          DRAFT_BODY=$(jq -n --arg title "$TITLE" --rawfile content "$ARTICLE" '{articles: [{title: $title, content: $content, content_source_url: "", need_open_comment: 0, only_fans_can_comment: 0}]}')
+          RESULT=$(curl -s -X POST "https://api.weixin.qq.com/cgi-bin/draft/add?access_token=$TOKEN" -H "Content-Type: application/json" -d "$DRAFT_BODY")
+          echo "$RESULT"
+          if echo "$RESULT" | jq -e '.errcode == 0' > /dev/null; then
+            echo "✅ 草稿推送成功"
+          else
+            echo "⚠️ 草稿推送失败"
+          fi
+
+      - name: 提交历史数据（保持 MA 连续性）
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if [ -f auto_daily/price_history.json ]; then
+            cp auto_daily/price_history.json auto_daily/price_history.json.bak
+            git add auto_daily/price_history.json
+            git commit -m "🤖 更新黄金历史价格数据 [skip ci]" || echo "无变化"
+            git push || echo "推送失败（可能需要配置 workflow permissions）"
+          fi

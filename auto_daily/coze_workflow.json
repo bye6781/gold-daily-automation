@@ -1,0 +1,40 @@
+{
+  "version": "1.0",
+  "workflow": {
+    "name": "黄金文章每日生成",
+    "description": "每天早上 8:00 触发本地黄金文章生成服务，生成后可推送文章路径或通知",
+    "nodes": [
+      {
+        "id": "start",
+        "type": "start",
+        "name": "开始",
+        "outputs": ["date"]
+      },
+      {
+        "id": "http_request",
+        "type": "http",
+        "name": "HTTP请求-生成黄金文章",
+        "config": {
+          "method": "POST",
+          "url": "http://YOUR_SERVER_IP:3000/run",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {},
+          "timeout": 120000
+        },
+        "outputs": ["success", "elapsed", "mdPath", "htmlPath"]
+      },
+      {
+        "id": "end",
+        "type": "end",
+        "name": "结束",
+        "inputs": ["result"]
+      }
+    ],
+    "edges": [
+      { "from": "start", "to": "http_request" },
+      { "from": "http_request", "to": "end" }
+    ]
+  }
+}
