@@ -10,7 +10,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const OUTPUT_DIR = 'D:/Codex/黄金文章/auto_daily';
+const OUTPUT_DIR = __dirname;
 const TODAY = new Date();
 const DATE_STR = TODAY.toISOString().split('T')[0];
 
@@ -492,7 +492,7 @@ var output = {
 
 var outPath = path.join(OUTPUT_DIR, 'latest_data.json');
 fs.writeFileSync(outPath, JSON.stringify(output, null, 2), 'utf-8');
-fs.writeFileSync(path.join(OUTPUT_DIR, 'gold_data_' + DATE_STR + '.json'), JSON.stringify(output, null, 2), 'utf-8');
+fs.writeFileSync(path.join(__dirname, 'gold_data_' + DATE_STR + '.json'), JSON.stringify(output, null, 2), 'utf-8');
 
 console.log('\n=== 抓取结果 (金十+COMEX) ===');
 console.log('现货黄金(XAU): $' + output.SPOT_PRICE + '/oz  ' + output.SPOT_CHANGE);
