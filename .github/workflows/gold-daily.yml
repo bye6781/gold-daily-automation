@@ -22,11 +22,9 @@ jobs:
     timeout-minutes: 15
 
     steps:
-      - name: 检出代码
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: 安装 Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
 
@@ -34,23 +32,22 @@ jobs:
         working-directory: auto_daily
         run: npm ci
 
-      - name: 安装 Playwright 浏览器
+      - name: 安装 Playwright
         working-directory: auto_daily
         run: npx playwright install chromium
 
       - name: 创建输出目录
         run: New-Item -ItemType Directory -Force -Path daily_output | Out-Null
 
-      - name: 第1步：抓取数据
+      - name: 抓取数据
         working-directory: auto_daily
         run: node fetch_data.mjs
 
-      - name: 第2步：生成文章
+      - name: 生成文章
         working-directory: auto_daily
         run: node generate_article.mjs
 
-      - name: 归档文章文件
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: gold-article-${{ github.run_id }}
           path: |
@@ -62,25 +59,8 @@ jobs:
       - name: 生成封面图
         if: ${{ github.event.inputs.push_draft == 'true' }}
         working-directory: auto_daily
-        run: |
-          Add-Type -AssemblyName System.Drawing
-          $bmp = New-Object System.Drawing.Bitmap(900, 500)
-          $g = [System.Drawing.Graphics]::FromImage($bmp)
-          $g.SmoothingMode = "HighQuality"
-          $b1 = New-Object System.Drawing.Drawing2D.LinearGradientBrush((New-Object System.Drawing.Point(0,0)),(New-Object System.Drawing.Point(900,500)),[System.Drawing.Color]::FromArgb(15,25,35),[System.Drawing.Color]::FromArgb(26,39,64))
-          $g.FillRectangle($b1,0,0,900,500)
-          $g.DrawLine((New-Object System.Drawing.Pen([System.Drawing.Color]::FromArgb(200,150,62),2)),0,490,900,490)
-          $f1=New-Object System.Drawing.Font("Microsoft YaHei",36,[System.Drawing.FontStyle]::Bold)
-          $tb=New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(226,176,74))
-          $sf=New-Object System.Drawing.StringFormat;$sf.Alignment="Center";$sf.LineAlignment="Center"
-          $g.DrawString("技术析金",$f1,$tb,(New-Object System.Drawing.RectangleF(40,140,820,120)),$sf)
-          $f2=New-Object System.Drawing.Font("Microsoft YaHei",18)
-          $tb2=New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(180,190,200))
-          $g.DrawString("黄金价格今日金价深度分析",$f2,$tb2,(New-Object System.Drawing.RectangleF(40,260,820,60)),$sf)
-          $g.DrawString((Get-Date -Format "yyyy年M月d日"),(New-Object System.Drawing.Font("Microsoft YaHei",14)),(New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(120,130,140))),(New-Object System.Drawing.RectangleF(40,320,820,40)),$sf)
-          $bmp.Save("cover.png",[System.Drawing.Imaging.ImageFormat]::Png)
-          $g.Dispose();$bmp.Dispose()
-          Write-Host "封面图已生成"
+        shell: cmd
+        run: powershell -ExecutionPolicy Bypass -File gen_cover.ps1
 
       - name: 推送至公众号草稿箱
         if: ${{ github.event.inputs.push_draft == 'true' }}
