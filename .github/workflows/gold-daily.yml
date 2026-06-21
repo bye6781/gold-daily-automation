@@ -2,12 +2,11 @@ name: 黄金日更文章生成
 
 on:
   schedule:
-    # 北京时间每个交易日 08:00 (UTC 00:00, 周一到周五)
-    - cron: '0 0 * * 1-5'
+    - cron: "0 0 * * 1-5"
   workflow_dispatch:
     inputs:
       push_draft:
-        description: '是否推送至公众号草稿箱'
+        description: "是否推送至公众号草稿箱"
         type: boolean
         default: false
 
@@ -15,7 +14,7 @@ env:
   TZ: Asia/Shanghai
 
 permissions:
-  contents: write  # 允许推送历史数据
+  contents: write
 
 jobs:
   generate:
@@ -30,7 +29,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
+          cache: npm
           cache-dependency-path: auto_daily/package.json
 
       - name: 安装依赖
@@ -64,7 +63,7 @@ jobs:
             auto_daily/latest_data.json
           retention-days: 7
 
-            - name: 推送至公众号草稿箱
+      - name: 推送至公众号草稿箱
         if: ${{ github.event.inputs.push_draft == 'true' }}
         env:
           WX_APPID: ${{ secrets.WX_APPID }}
@@ -91,8 +90,6 @@ jobs:
             echo "?? 草稿推送失败: $(echo "$RESULT" | jq -r '.errmsg // "未知错误"')"
           fi
 
-
-
       - name: 提交历史数据（保持 MA 连续性）
         run: |
           git config user.name "github-actions[bot]"
@@ -103,4 +100,3 @@ jobs:
             git commit -m "?? 更新黄金历史价格数据 [skip ci]" || echo "无变化"
             git push || echo "推送失败（可能需要配置 workflow permissions）"
           fi
-
