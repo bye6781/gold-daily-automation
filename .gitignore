@@ -1,12 +1,10 @@
-﻿# node_modules/ (ignored)
+# node_modules/ (ignored)
 *.png
 *.svg
 daily_output/*.html
 daily_output/*.md
 auto_daily/latest_data.json
 auto_daily/gold_data_*.json
-auto_daily/price_history.json
-auto_daily/price_history.json.bak
 _patch_*.cjs
 _create_*.cjs
 _fix_*.cjs
