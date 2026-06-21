@@ -18,8 +18,8 @@ permissions:
 
 jobs:
   generate:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
+    runs-on: self-hosted
+    timeout-minutes: 15
 
     steps:
       - name: 检出代码
@@ -29,8 +29,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
-          cache-dependency-path: auto_daily/package.json
 
       - name: 安装依赖
         working-directory: auto_daily
@@ -38,12 +36,10 @@ jobs:
 
       - name: 安装 Playwright 浏览器
         working-directory: auto_daily
-        run: |
-          npx playwright install chromium
-          npx playwright install-deps chromium
+        run: npx playwright install chromium
 
       - name: 创建输出目录
-        run: mkdir -p daily_output
+        run: New-Item -ItemType Directory -Force -Path daily_output | Out-Null
 
       - name: 第1步：抓取数据
         working-directory: auto_daily
@@ -68,35 +64,46 @@ jobs:
         env:
           WX_APPID: ${{ secrets.WX_APPID }}
           WX_APPSECRET: ${{ secrets.WX_APPSECRET }}
-        working-directory: auto_daily
+        shell: pwsh
         run: |
-          echo "正在获取 access_token..."
-          RAW=$(curl -s "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=$WX_APPID&secret=$WX_APPSECRET")
-          echo "WeChat 原始响应: $RAW"
-          TOKEN=$(echo "$RAW" | jq -r '.access_token // empty')
-          if [ -z "$TOKEN" ] || [ "$TOKEN" = "null" ]; then
-            echo "获取 access_token 失败，错误信息: $(echo "$RAW" | jq -r '.errmsg // "未知错误"')"
+          $ErrorActionPreference = "Stop"
+          Write-Host "正在获取 access_token..."
+          $tokenResp = Invoke-RestMethod -Uri "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=$env:WX_APPID&secret=$env:WX_APPSECRET"
+          Write-Host "WeChat 响应: $($tokenResp | ConvertTo-Json -Compress)"
+          if (-not $tokenResp.access_token) {
+            Write-Host "获取 access_token 失败: $($tokenResp.errmsg)"
             exit 0
-          fi
-          echo "access_token 获取成功"
-          ARTICLE=$(find ../daily_output -name "*.html" -type f | sort -r | head -1)
-          TITLE="【技术析金】黄金价格今日金价深度分析"
-          DRAFT_BODY=$(jq -n --arg title "$TITLE" --rawfile content "$ARTICLE" '{articles: [{title: $title, content: $content, content_source_url: "", need_open_comment: 0, only_fans_can_comment: 0}]}')
-          RESULT=$(curl -s -X POST "https://api.weixin.qq.com/cgi-bin/draft/add?access_token=$TOKEN" -H "Content-Type: application/json" -d "$DRAFT_BODY")
-          echo "草稿推送响应: $RESULT"
-          if echo "$RESULT" | jq -e '.errcode == 0' > /dev/null; then
-            echo "? 公众号草稿推送成功！请登录微信公众平台查看草稿箱。"
-          else
-            echo "?? 草稿推送失败: $(echo "$RESULT" | jq -r '.errmsg // "未知错误"')"
-          fi
+          }
+          Write-Host "access_token 获取成功"
+          $article = Get-ChildItem ../daily_output/*.html | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+          $title = "【技术析金】黄金价格今日金价深度分析"
+          $content = Get-Content $article.FullName -Raw -Encoding UTF8
+          $body = @{
+            articles = @(@{
+              title = $title
+              content = $content
+              content_source_url = ""
+              need_open_comment = 0
+              only_fans_can_comment = 0
+            })
+          } | ConvertTo-Json -Depth 5 -Compress
+          $draftResp = Invoke-RestMethod -Uri "https://api.weixin.qq.com/cgi-bin/draft/add?access_token=$($tokenResp.access_token)" -Method Post -ContentType "application/json" -Body $body
+          Write-Host "草稿推送响应: $($draftResp | ConvertTo-Json -Compress)"
+          if ($draftResp.errcode -eq 0) {
+            Write-Host "? 公众号草稿推送成功！请登录微信公众平台查看草稿箱。"
+          } else {
+            Write-Host "?? 草稿推送失败: $($draftResp.errmsg)"
+          }
 
-      - name: 提交历史数据（保持 MA 连续性）
+      - name: 提交历史数据
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          if [ -f auto_daily/price_history.json ]; then
-            cp auto_daily/price_history.json auto_daily/price_history.json.bak
+          if (Test-Path auto_daily/price_history.json) {
+            Copy-Item auto_daily/price_history.json auto_daily/price_history.json.bak
             git add -f auto_daily/price_history.json
-            git commit -m "?? 更新黄金历史价格数据 [skip ci]" || echo "无变化"
-            git push || echo "推送失败（可能需要配置 workflow permissions）"
-          fi
+            git commit -m "?? 更新黄金历史价格数据 [skip ci]"
+            git push
+          } else {
+            Write-Host "price_history.json 不存在，跳过提交"
+          }
