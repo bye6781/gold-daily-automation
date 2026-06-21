@@ -68,7 +68,7 @@ jobs:
           WX_APPID: ${{ secrets.WX_APPID }}
           WX_APPSECRET: ${{ secrets.WX_APPSECRET }}
         working-directory: auto_daily
-        run: node push_wechat.mjs
+        run: node push_wechat.cjs
 
       - name: 提交历史数据
         run: |
