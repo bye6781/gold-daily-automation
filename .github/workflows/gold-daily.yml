@@ -59,7 +59,7 @@ jobs:
             auto_daily/latest_data.json
           retention-days: 7
 
-            - name: 生成封面图
+      - name: 生成封面图
         if: ${{ github.event.inputs.push_draft == 'true' }}
         working-directory: auto_daily
         run: |
@@ -67,22 +67,22 @@ jobs:
           $bmp = New-Object System.Drawing.Bitmap(900, 500)
           $g = [System.Drawing.Graphics]::FromImage($bmp)
           $g.SmoothingMode = "HighQuality"
-          $brush1 = New-Object System.Drawing.Drawing2D.LinearGradientBrush((New-Object System.Drawing.Point(0,0)), (New-Object System.Drawing.Point(900,500)), [System.Drawing.Color]::FromArgb(15,25,35), [System.Drawing.Color]::FromArgb(26,39,64))
-          $g.FillRectangle($brush1, 0, 0, 900, 500)
-          $g.DrawLine((New-Object System.Drawing.Pen([System.Drawing.Color]::FromArgb(200,150,62), 2)), 0, 490, 900, 490)
-          $font = New-Object System.Drawing.Font("Microsoft YaHei", 36, [System.Drawing.FontStyle]::Bold)
-          $tb = New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(226,176,74))
-          $sf = New-Object System.Drawing.StringFormat; $sf.Alignment = "Center"; $sf.LineAlignment = "Center"
-          $g.DrawString("技术析金", $font, $tb, (New-Object System.Drawing.RectangleF(40,140,820,120)), $sf)
-          $font2 = New-Object System.Drawing.Font("Microsoft YaHei", 18)
-          $tb2 = New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(180,190,200))
-          $g.DrawString("黄金价格今日金价深度分析", $font2, $tb2, (New-Object System.Drawing.RectangleF(40,260,820,60)), $sf)
-          $g.DrawString((Get-Date -Format "yyyy年M月d日"), (New-Object System.Drawing.Font("Microsoft YaHei",14)), (New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(120,130,140))), (New-Object System.Drawing.RectangleF(40,320,820,40)), $sf)
-          $bmp.Save("cover.png", [System.Drawing.Imaging.ImageFormat]::Png)
-          $g.Dispose(); $bmp.Dispose()
+          $b1 = New-Object System.Drawing.Drawing2D.LinearGradientBrush((New-Object System.Drawing.Point(0,0)),(New-Object System.Drawing.Point(900,500)),[System.Drawing.Color]::FromArgb(15,25,35),[System.Drawing.Color]::FromArgb(26,39,64))
+          $g.FillRectangle($b1,0,0,900,500)
+          $g.DrawLine((New-Object System.Drawing.Pen([System.Drawing.Color]::FromArgb(200,150,62),2)),0,490,900,490)
+          $f1=New-Object System.Drawing.Font("Microsoft YaHei",36,[System.Drawing.FontStyle]::Bold)
+          $tb=New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(226,176,74))
+          $sf=New-Object System.Drawing.StringFormat;$sf.Alignment="Center";$sf.LineAlignment="Center"
+          $g.DrawString("技术析金",$f1,$tb,(New-Object System.Drawing.RectangleF(40,140,820,120)),$sf)
+          $f2=New-Object System.Drawing.Font("Microsoft YaHei",18)
+          $tb2=New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(180,190,200))
+          $g.DrawString("黄金价格今日金价深度分析",$f2,$tb2,(New-Object System.Drawing.RectangleF(40,260,820,60)),$sf)
+          $g.DrawString((Get-Date -Format "yyyy年M月d日"),(New-Object System.Drawing.Font("Microsoft YaHei",14)),(New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(120,130,140))),(New-Object System.Drawing.RectangleF(40,320,820,40)),$sf)
+          $bmp.Save("cover.png",[System.Drawing.Imaging.ImageFormat]::Png)
+          $g.Dispose();$bmp.Dispose()
           Write-Host "封面图已生成"
 
-- name: 推送至公众号草稿箱
+      - name: 推送至公众号草稿箱
         if: ${{ github.event.inputs.push_draft == 'true' }}
         env:
           WX_APPID: ${{ secrets.WX_APPID }}
