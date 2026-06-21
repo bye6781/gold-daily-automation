@@ -64,7 +64,7 @@ jobs:
             auto_daily/latest_data.json
           retention-days: 7
 
-      - name: 推送至公众号草稿箱（可选）
+            - name: 推送至公众号草稿箱
         if: ${{ github.event.inputs.push_draft == 'true' }}
         env:
           WX_APPID: ${{ secrets.WX_APPID }}
@@ -72,21 +72,26 @@ jobs:
         working-directory: auto_daily
         run: |
           echo "正在获取 access_token..."
-          TOKEN=$(curl -s "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=$WX_APPID&secret=$WX_APPSECRET" | jq -r '.access_token')
+          RAW=$(curl -s "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=$WX_APPID&secret=$WX_APPSECRET")
+          echo "WeChat 原始响应: $RAW"
+          TOKEN=$(echo "$RAW" | jq -r '.access_token // empty')
           if [ -z "$TOKEN" ] || [ "$TOKEN" = "null" ]; then
-            echo "获取 access_token 失败，跳过推送"
+            echo "获取 access_token 失败，错误信息: $(echo "$RAW" | jq -r '.errmsg // "未知错误"')"
             exit 0
           fi
+          echo "access_token 获取成功"
           ARTICLE=$(find ../daily_output -name "*.html" -type f | sort -r | head -1)
-          TITLE="黄金价格今日金价深度分析"
+          TITLE="【技术析金】黄金价格今日金价深度分析"
           DRAFT_BODY=$(jq -n --arg title "$TITLE" --rawfile content "$ARTICLE" '{articles: [{title: $title, content: $content, content_source_url: "", need_open_comment: 0, only_fans_can_comment: 0}]}')
           RESULT=$(curl -s -X POST "https://api.weixin.qq.com/cgi-bin/draft/add?access_token=$TOKEN" -H "Content-Type: application/json" -d "$DRAFT_BODY")
-          echo "$RESULT"
+          echo "草稿推送响应: $RESULT"
           if echo "$RESULT" | jq -e '.errcode == 0' > /dev/null; then
-            echo "? 草稿推送成功"
+            echo "? 公众号草稿推送成功！请登录微信公众平台查看草稿箱。"
           else
-            echo "?? 草稿推送失败"
+            echo "?? 草稿推送失败: $(echo "$RESULT" | jq -r '.errmsg // "未知错误"')"
           fi
+
+
 
       - name: 提交历史数据（保持 MA 连续性）
         run: |
