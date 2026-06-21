@@ -111,7 +111,7 @@ async function main() {
   const draftResp = await postJson(token, "/cgi-bin/draft/add", { articles: [article] });
   console.log("Draft push response:", JSON.stringify(draftResp));
 
-  if (draftResp.errcode === 0) {
+  if (!draftResp.errcode || draftResp.errcode === 0) {
     console.log("? 公众号草稿推送成功！请登录微信公众平台 → 草稿箱 查看。");
   } else {
     console.log(`?? 草稿推送失败: errcode=${draftResp.errcode} errmsg=${draftResp.errmsg}`);
