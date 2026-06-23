@@ -5,102 +5,131 @@ const path = require("path");
 const APPID = process.env.WX_APPID;
 const APPSECRET = process.env.WX_APPSECRET;
 
-async function getAccessToken() {
+if (!APPID || !APPSECRET) {
+  console.error("ERROR: WX_APPID or WX_APPSECRET not set");
+  process.exit(1);
+}
+
+// ===== Get access_token =====
+function getAccessToken() {
   return new Promise((resolve, reject) => {
-    https.get(`https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${APPID}&secret=${APPSECRET}`, (res) => {
+    const url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" + APPID + "&secret=" + APPSECRET;
+    https.get(url, (res) => {
       let data = "";
-      res.on("data", (chunk) => (data += chunk));
+      res.on("data", (chunk) => data += chunk);
       res.on("end", () => {
-        const json = JSON.parse(data);
-        if (json.access_token) resolve(json.access_token);
-        else reject(new Error(`Token failed: ${JSON.stringify(json)}`));
+        try {
+          const json = JSON.parse(data);
+          if (json.access_token) resolve(json.access_token);
+          else reject(new Error("Token failed: " + JSON.stringify(json)));
+        } catch (e) { reject(e); }
+      });
+    }).on("error", reject);
+  });
+}
+
+// ===== Upload image as permanent material =====
+function uploadImage(token, filePath) {
+  return new Promise((resolve, reject) => {
+    const boundary = "----FormBoundary" + Math.random().toString(36).slice(2);
+    const fileBuffer = fs.readFileSync(filePath);
+    const fileName = path.basename(filePath);
+    const header = Buffer.from(
+      "--" + boundary + "\r\n" +
+      "Content-Disposition: form-data; name=\"media\"; filename=\"" + fileName + "\"\r\n" +
+      "Content-Type: image/png\r\n\r\n"
+    );
+    const footer = Buffer.from("\r\n--" + boundary + "--\r\n");
+    const body = Buffer.concat([header, fileBuffer, footer]);
+
+    const req = https.request({
+      hostname: "api.weixin.qq.com",
+      path: "/cgi-bin/material/add_material?access_token=" + token + "&type=image",
+      method: "POST",
+      headers: {
+        "Content-Type": "multipart/form-data; boundary=" + boundary,
+        "Content-Length": body.length,
+      },
+    }, (res) => {
+      let data = "";
+      res.on("data", (chunk) => data += chunk);
+      res.on("end", () => {
+        try { resolve(JSON.parse(data)); }
+        catch (e) { reject(e); }
       });
     });
-  });
-}
-
-async function uploadImage(token, filePath) {
-  const boundary = "----FormBoundary" + Math.random().toString(36).slice(2);
-  const fileBuffer = fs.readFileSync(filePath);
-  const fileName = path.basename(filePath);
-
-  const header =
-    `--${boundary}\r\nContent-Disposition: form-data; name="media"; filename="${fileName}"\r\nContent-Type: image/png\r\n\r\n`;
-  const footer = `\r\n--${boundary}--\r\n`;
-  const body = Buffer.concat([Buffer.from(header), fileBuffer, Buffer.from(footer)]);
-
-  return new Promise((resolve, reject) => {
-    const req = https.request(
-      {
-        hostname: "api.weixin.qq.com",
-        path: `/cgi-bin/material/add_material?access_token=${token}&type=image`,
-        method: "POST",
-        headers: { "Content-Type": `multipart/form-data; boundary=${boundary}`, "Content-Length": body.length },
-      },
-      (res) => {
-        let data = "";
-        res.on("data", (chunk) => (data += chunk));
-        res.on("end", () => resolve(JSON.parse(data)));
-      }
-    );
     req.on("error", reject);
     req.write(body);
     req.end();
   });
 }
 
+// ===== POST JSON with explicit UTF-8 Buffer =====
 function postJson(token, path, jsonBody) {
-  const body = JSON.stringify(jsonBody);
+  const bodyStr = JSON.stringify(jsonBody);
+  const bodyBuf = Buffer.from(bodyStr, "utf-8");
   return new Promise((resolve, reject) => {
-    const req = https.request(
-      {
-        hostname: "api.weixin.qq.com",
-        path: `${path}?access_token=${token}`,
-        method: "POST",
-        headers: { "Content-Type": "application/json; charset=utf-8", "Content-Length": Buffer.byteLength(body) },
+    const req = https.request({
+      hostname: "api.weixin.qq.com",
+      path: path + "?access_token=" + token,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+        "Content-Length": bodyBuf.length,
       },
-      (res) => {
-        let data = "";
-        res.on("data", (chunk) => (data += chunk));
-        res.on("end", () => resolve(JSON.parse(data)));
-      }
-    );
+    }, (res) => {
+      let data = "";
+      res.on("data", (chunk) => data += chunk);
+      res.on("end", () => {
+        try { resolve(JSON.parse(data)); }
+        catch (e) { reject(e); }
+      });
+    });
     req.on("error", reject);
-    req.write(body);
+    req.write(bodyBuf);
     req.end();
   });
 }
 
+// ===== Main =====
 async function main() {
-  console.log("ÕýÔÚ»ñÈ¡ access_token...");
+  console.log("[1/4] Getting access_token...");
   const token = await getAccessToken();
-  console.log("access_token »ñÈ¡³É¹¦");
+  console.log("[1/4] access_token OK");
 
-  // Find article
+  // Find article HTML (prefer WX version)
   const dailyDir = path.resolve(__dirname, "..", "daily_output");
-  const files = fs.readdirSync(dailyDir).filter((f) => f.endsWith(".html")).sort();
-  const latest = files[files.length - 1];
-  const articlePath = path.join(dailyDir, latest);
-  console.log(`Found article: ${articlePath}`);
+  const allHtml = fs.readdirSync(dailyDir).filter(function(f) { return f.endsWith(".html"); }).sort();
+  let wxFiles = allHtml.filter(function(f) { return f.includes("wx_"); });
+  if (wxFiles.length === 0) wxFiles = allHtml.slice(-1);
+  const articleFile = wxFiles[wxFiles.length - 1];
+  const articlePath = path.join(dailyDir, articleFile);
+  console.log("[2/4] Article: " + articleFile);
   const content = fs.readFileSync(articlePath, "utf-8");
 
-  // Upload cover (or try to use existing)
+  // Upload cover
   const coverPath = path.resolve(__dirname, "cover.png");
   let thumbMediaId = "";
   if (fs.existsSync(coverPath)) {
-    console.log("ÕýÔÚÉÏ´«·âÃæÍ¼...");
-    const uploadResp = await uploadImage(token, coverPath);
-    console.log("Upload response:", JSON.stringify(uploadResp));
-    thumbMediaId = uploadResp.media_id || "";
-    if (thumbMediaId) console.log(`·âÃæÉÏ´«³É¹¦, media_id: ${thumbMediaId}`);
+    console.log("[3/4] Uploading cover...");
+    try {
+      const uploadResp = await uploadImage(token, coverPath);
+      console.log("[3/4] Cover upload response: " + JSON.stringify(uploadResp));
+      thumbMediaId = uploadResp.media_id || "";
+      if (thumbMediaId) console.log("[3/4] Cover OK: " + thumbMediaId);
+    } catch (e) {
+      console.log("[3/4] Cover upload failed: " + e.message);
+    }
+  } else {
+    console.log("[3/4] No cover.png, skipping");
   }
 
-  // Push draft
-  console.log("ÕýÔÚÍÆËÍ²Ý¸å...");
+  // Create draft
+  console.log("[4/4] Creating draft...");
   const article = {
-    title: "¡¾¼¼ÊõÎö½ð¡¿»Æ½ð¼Û¸ñ½ñÈÕ½ð¼ÛÉî¶È·ÖÎö",
-    author: "¼¼ÊõÎö½ð",
-    digest: "½ñÈÕ»Æ½ðÊµÊ±¼Û¸ñ¡¢¼¼ÊõÃæ·ÖÎö¡¢¾ùÏßÏµÍ³¼°»ù±¾ÃæÉî¶È½â¶Á¡£Êý¾ÝÀ´Ô´£º½ðÊ®Êý¾Ý & COMEX",
+    title: "é»„é‡‘ä»·æ ¼ä»Šæ—¥é‡‘ä»· | æŠ€æœ¯æžé‡‘æ·±åº¦åˆ†æž",
+    author: "æŠ€æœ¯æžé‡‘",
+    digest: "å›½é™…é‡‘ä»·å®žæ—¶æŠ¥ä»· + æŠ€æœ¯é¢è§£è¯» + æœ¬å‘¨å…³æ³¨è¦ç‚¹ | æ•°æ®æ¥æºï¼šé‡‘åæ•°æ® & COMEX",
     content: content,
     content_source_url: "",
     need_open_comment: 0,
@@ -109,16 +138,17 @@ async function main() {
   if (thumbMediaId) article.thumb_media_id = thumbMediaId;
 
   const draftResp = await postJson(token, "/cgi-bin/draft/add", { articles: [article] });
-  console.log("Draft push response:", JSON.stringify(draftResp));
+  console.log("[4/4] Response: " + JSON.stringify(draftResp));
 
   if (!draftResp.errcode || draftResp.errcode === 0) {
-    console.log("? ¹«ÖÚºÅ²Ý¸åÍÆËÍ³É¹¦£¡ÇëµÇÂ¼Î¢ÐÅ¹«ÖÚÆ½Ì¨ ¡ú ²Ý¸åÏä ²é¿´¡£");
+    console.log("SUCCESS: Draft created, media_id=" + (draftResp.media_id || "N/A"));
   } else {
-    console.log(`?? ²Ý¸åÍÆËÍÊ§°Ü: errcode=${draftResp.errcode} errmsg=${draftResp.errmsg}`);
+    console.log("FAILED: errcode=" + draftResp.errcode + " errmsg=" + draftResp.errmsg);
+    process.exit(1);
   }
 }
 
-main().catch((e) => {
-  console.error("Fatal error:", e.message);
+main().catch(function(e) {
+  console.error("FATAL: " + e.message);
   process.exit(0);
 });

@@ -25,6 +25,7 @@ const browser = await chromium.launch({
 });
 
 // ========== 1. 金十数据: 现货黄金 (XAU/USD) + 美元指数 + 新闻 ==========
+var usdCny = 7.28;
 console.log('正在抓取 金十数据 (jin10.com)...');
 const j10Page = await browser.newPage();
 let jin10Data = { spotPrice: '', spotChange: '', spotChangePct: '', dxy: '', news: [] };
@@ -34,9 +35,9 @@ try {
     waitUntil: 'domcontentloaded',
     timeout: 30000
   });
-  await new Promise(r => setTimeout(r, 5000));
+  await new Promise(r => setTimeout(r, 8000));
 
-  jin10Data = await j10Page.evaluate(() => {
+  const jin10BodyText = await j10Page.evaluate(() => document.body.innerText); jin10Data = await j10Page.evaluate(() => {
     const body = document.body.innerText;
     const result = { spotPrice: '', spotChange: '', spotChangePct: '', dxy: '', silverPrice: '', silverChangePct: '', news: [], importantEvents: [], weeklyOutlook: '' };
 
@@ -112,9 +113,21 @@ try {
     return result;
   });
   console.log('金十数据:', JSON.stringify({ spotPrice: jin10Data.spotPrice, spotChangePct: jin10Data.spotChangePct, dxy: jin10Data.dxy, newsCount: jin10Data.news.length }, null, 2));
+  // USD/CNY from jin10 page text (live rate)
+  usdCny = 7.28;
+  const usdCnyMatch = (jin10BodyText || "").match(/美元人民币s+([d.]+)/);
+  if (usdCnyMatch) {
+    usdCny = parseFloat(usdCnyMatch[1]);
+    console.log("USD/CNY from jin10: " + usdCny);
+  } else {
+    usdCny = Math.round((7.30 - (dxy - 100) * 0.02) * 100) / 100;
+    console.log("USD/CNY estimated from DXY: " + usdCny);
+  }
 } catch (e) {
   console.log('金十数据抓取失败:', e.message);
 }
+
+
 await j10Page.close();
 
 // ========== 2. Yahoo Finance: COMEX 期货 (GC=F) ==========
@@ -294,7 +307,7 @@ const spotChangePct = jin10Data.spotChangePct || '数据待更新';
 
 // 美元兑人民币 (估算，优先从行情推算)
 const dxy = parseFloat(jin10Data.dxy) || 100.7;
-const usdCny = Math.round((7.30 - (dxy - 100) * 0.02) * 100) / 100;
+
 const gramPrice = spotPrice / 31.1035;
 const rmbGram = Math.round(gramPrice * usdCny);
 
@@ -444,8 +457,8 @@ var bankSaving = {
 // ========== 7. 输出 ==========
 var output = {
   DATE: DATE_STR, DATE_CN: dateCN, DATA_DATE: dateCN,
-  SPOT_PRICE: spotPrice.toLocaleString('en-US', { minimumFractionDigits: 2 }),
-  COMEX_PRICE: comexPrice,
+  SPOT_PRICE: spotPrice.toFixed(2),
+  COMEX_PRICE: comexPrice.replace(/,/g, ''),
   SILVER_LOW: silverHL.low || '', SILVER_HIGH: silverHL.high || '',
   COMEX_MONTH: yfData.comexMonth || 'Aug',
   SPOT_CHANGE: spotChangePct,
@@ -476,7 +489,7 @@ var output = {
   WEEK_EVENTS: generateWeekEvents(jin10Data),
   DATA_SOURCE: '金十数据 (jin10.com) / COMEX (cmegroup.com)',
   SILVER_PRICE: jin10Data.silverPrice || '', SILVER_CHANGE: jin10Data.silverChangePct || '',
-  PALLADIUM_PRICE: metalsData.palladium || '', PD_LOW: metalsData.pdLow || '', PD_HIGH: metalsData.pdHigh || '',
+  PALLADIUM_PRICE: (metalsData.palladium || '').replace(/,/g, ''), PD_LOW: metalsData.pdLow || '', PD_HIGH: metalsData.pdHigh || '',
   PLATINUM_PRICE: metalsData.platinum || '', PT_LOW: metalsData.ptLow || '', PT_HIGH: metalsData.ptHigh || '',
   QUOTE_TIME: new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' }),
   DOMESTIC_GOLD: rmbGram.toString(),
