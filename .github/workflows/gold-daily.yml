@@ -18,8 +18,8 @@ permissions:
 
 jobs:
   generate:
-    runs-on: self-hosted
-    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
 
     steps:
       - uses: actions/checkout@v4
@@ -34,10 +34,9 @@ jobs:
 
       - name: 安装 Playwright
         working-directory: auto_daily
-        run: npx playwright install chromium
-
-      - name: 创建输出目录
-        run: New-Item -ItemType Directory -Force -Path daily_output | Out-Null
+        run: |
+          npx playwright install chromium
+          npx playwright install-deps chromium
 
       - name: 抓取数据
         working-directory: auto_daily
@@ -47,6 +46,11 @@ jobs:
         working-directory: auto_daily
         run: node generate_article.mjs
 
+      - name: 生成封面图
+        if: ${{ github.event.inputs.push_draft == 'true' }}
+        working-directory: auto_daily
+        run: node gen_cover.cjs
+
       - uses: actions/upload-artifact@v4
         with:
           name: gold-article-${{ github.run_id }}
@@ -55,12 +59,6 @@ jobs:
             daily_output/*.html
             auto_daily/latest_data.json
           retention-days: 7
-
-      - name: 生成封面图
-        if: ${{ github.event.inputs.push_draft == 'true' }}
-        working-directory: auto_daily
-        shell: cmd
-        run: powershell -ExecutionPolicy Bypass -File gen_cover.ps1
 
       - name: 推送至公众号草稿箱
         if: ${{ github.event.inputs.push_draft == 'true' }}
@@ -74,11 +72,9 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          if (Test-Path auto_daily/price_history.json) {
-            Copy-Item auto_daily/price_history.json auto_daily/price_history.json.bak
+          if [ -f auto_daily/price_history.json ]; then
+            cp auto_daily/price_history.json auto_daily/price_history.json.bak
             git add -f auto_daily/price_history.json
-            git commit -m "?? 更新黄金历史价格数据 [skip ci]"
-            git push
-          } else {
-            Write-Host "price_history.json 不存在，跳过提交"
-          }
+            git commit -m "?? 更新黄金历史价格数据 [skip ci]" || echo "无变化"
+            git push || echo "推送失败"
+          fi
