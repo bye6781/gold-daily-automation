@@ -1,10 +1,8 @@
 name: �ƽ��ո���������
 
 on:
-  repository_dispatch:
-    types: [gold-daily]
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "0 0 * * 1-5"
   workflow_dispatch:
     inputs:
       push_draft:
