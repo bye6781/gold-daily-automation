@@ -1,4 +1,4 @@
-name: »Æ½ðÈÕ¸üÎÄÕÂÉú³É
+name: ï¿½Æ½ï¿½ï¿½Õ¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 on:
   schedule:
@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       push_draft:
-        description: "ÊÇ·ñÍÆËÍÖÁ¹«ÖÚºÅ²Ý¸åÏä"
+        description: "ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÚºÅ²Ý¸ï¿½ï¿½ï¿½"
         type: boolean
         default: false
 
@@ -28,25 +28,25 @@ jobs:
         with:
           node-version: 20
 
-      - name: °²×°ÒÀÀµ
+      - name: ï¿½ï¿½×°ï¿½ï¿½ï¿½ï¿½
         working-directory: auto_daily
         run: npm ci
 
-      - name: °²×° Playwright
+      - name: ï¿½ï¿½×° Playwright
         working-directory: auto_daily
         run: |
           npx playwright install chromium
           npx playwright install-deps chromium
 
-      - name: ×¥È¡Êý¾Ý
+      - name: ×¥È¡ï¿½ï¿½ï¿½ï¿½
         working-directory: auto_daily
         run: node fetch_data.mjs
 
-      - name: Éú³ÉÎÄÕÂ
+      - name: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         working-directory: auto_daily
         run: node generate_article.mjs
 
-      - name: Éú³É·âÃæÍ¼
+      - name: ï¿½ï¿½ï¿½É·ï¿½ï¿½ï¿½Í¼
         if: ${{ github.event.inputs.push_draft == 'true' }}
         working-directory: auto_daily
         run: node gen_cover.cjs
@@ -60,7 +60,7 @@ jobs:
             auto_daily/latest_data.json
           retention-days: 7
 
-      - name: ÍÆËÍÖÁ¹«ÖÚºÅ²Ý¸åÏä
+      - name: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÚºÅ²Ý¸ï¿½ï¿½ï¿½
         if: ${{ github.event.inputs.push_draft == 'true' }}
         env:
           WX_APPID: ${{ secrets.WX_APPID }}
@@ -68,13 +68,13 @@ jobs:
         working-directory: auto_daily
         run: node push_wechat.cjs
 
-      - name: Ìá½»ÀúÊ·Êý¾Ý
+      - name: ï¿½á½»ï¿½ï¿½Ê·ï¿½ï¿½ï¿½ï¿½
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           if [ -f auto_daily/price_history.json ]; then
             cp auto_daily/price_history.json auto_daily/price_history.json.bak
             git add -f auto_daily/price_history.json
-            git commit -m "?? ¸üÐÂ»Æ½ðÀúÊ·¼Û¸ñÊý¾Ý [skip ci]" || echo "ÎÞ±ä»¯"
-            git push || echo "ÍÆËÍÊ§°Ü"
+            git commit -m "?? ï¿½ï¿½ï¿½Â»Æ½ï¿½ï¿½ï¿½Ê·ï¿½Û¸ï¿½ï¿½ï¿½ï¿½ï¿½ [skip ci]" || echo "ï¿½Þ±ä»¯"
+            git push || echo "ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½"
           fi
