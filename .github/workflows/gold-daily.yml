@@ -1,12 +1,14 @@
-name: �ƽ��ո���������
+name: 黄金日更文章生成
 
 on:
+  repository_dispatch:
+    types: [gold-daily]
   schedule:
-    - cron: "0 0 * * 1-5"
+    - cron: "0 0 * * *"
   workflow_dispatch:
     inputs:
       push_draft:
-        description: "�Ƿ����������ںŲݸ���"
+        description: "是否推送至公众号草稿箱"
         type: boolean
         default: false
 
@@ -23,34 +25,26 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-
-      - name: ��װ����
+      - name: 安装依赖
         working-directory: auto_daily
         run: npm ci
-
-      - name: ��װ Playwright
+      - name: 安装 Playwright
         working-directory: auto_daily
         run: |
           npx playwright install chromium
           npx playwright install-deps chromium
-
-      - name: ץȡ����
+      - name: 抓取数据
         working-directory: auto_daily
         run: node fetch_data.mjs
-
-      - name: ��������
+      - name: 生成文章
         working-directory: auto_daily
         run: node generate_article.mjs
-
-      - name: ���ɷ���ͼ
-        if: ${{ github.event.inputs.push_draft == 'true' }}
+      - name: 生成封面图
         working-directory: auto_daily
         run: node gen_cover.cjs
-
       - uses: actions/upload-artifact@v4
         with:
           name: gold-article-${{ github.run_id }}
@@ -59,22 +53,19 @@ jobs:
             daily_output/*.html
             auto_daily/latest_data.json
           retention-days: 7
-
-      - name: ���������ںŲݸ���
-        if: ${{ github.event.inputs.push_draft == 'true' }}
+      - name: 推送至公众号草稿箱
         env:
           WX_APPID: ${{ secrets.WX_APPID }}
           WX_APPSECRET: ${{ secrets.WX_APPSECRET }}
         working-directory: auto_daily
         run: node push_wechat.cjs
-
-      - name: �ύ��ʷ����
+      - name: 提交历史数据
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           if [ -f auto_daily/price_history.json ]; then
             cp auto_daily/price_history.json auto_daily/price_history.json.bak
             git add -f auto_daily/price_history.json
-            git commit -m "?? ���»ƽ���ʷ�۸����� [skip ci]" || echo "�ޱ仯"
-            git push || echo "����ʧ��"
+            git commit -m "update price history [skip ci]" || echo "no change"
+            git push || echo "push failed"
           fi
