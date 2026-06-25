@@ -10,6 +10,10 @@ on:
       push_draft:
         description: "推送至草稿箱"
         type: boolean
+        default: true
+      force:
+        description: "忽略今日已推送检查，强制重新生成"
+        type: boolean
         default: false
 
 env:
@@ -32,8 +36,12 @@ jobs:
       - name: 检查今日是否已推送
         id: check
         run: |
+          FORCE="${{ github.event.inputs.force || github.event.client_payload.force || 'false' }}"
           TODAY=$(TZ=Asia/Shanghai date +%Y%m%d)
-          if [ -f "auto_daily/last_push_date" ] && [ "$(cat auto_daily/last_push_date)" = "$TODAY" ]; then
+          if [ "$FORCE" = "true" ]; then
+            echo "强制模式，跳过日期检查"
+            echo "skip=false" >> $GITHUB_OUTPUT
+          elif [ -f "auto_daily/last_push_date" ] && [ "$(cat auto_daily/last_push_date)" = "$TODAY" ]; then
             echo "今日已推送，跳过"
             echo "skip=true" >> $GITHUB_OUTPUT
           else
