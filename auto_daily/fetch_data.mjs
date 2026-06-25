@@ -341,11 +341,87 @@ if (histData.length > 60) histData = histData.slice(-60);
 fs.writeFileSync(HISTORY_FILE, JSON.stringify(histData, null, 2), 'utf-8');
 console.log('历史数据: ' + histData.length + ' 条记录');
 
+
+function calcEMA(arr, days) {
+  var sub = arr.slice(-Math.max(days * 3, days));
+  if (sub.length < Math.min(days, 3)) return null;
+  var k = 2 / (days + 1);
+  var ema = sub[0].spotPrice;
+  for (var i = 1; i < sub.length; i++) ema = sub[i].spotPrice * k + ema * (1 - k);
+  return ema;
+}
+function calcBOLL(arr, period, mult) {
+  var sub = arr.slice(-Math.max(period * 2, period));
+  if (sub.length < Math.min(period, 3)) return { mid: null, upper: null, lower: null, width: null, position: null, assessment: '数据积累中' };
+  var sum = 0;
+  for (var i = sub.length - period; i < sub.length; i++) sum += sub[i].spotPrice;
+  var mid = sum / period;
+  var sqSum = 0;
+  for (var i = sub.length - period; i < sub.length; i++) sqSum += Math.pow(sub[i].spotPrice - mid, 2);
+  var std = Math.sqrt(sqSum / period);
+  var upper = mid + mult * std;
+  var lower = mid - mult * std;
+  var width = ((upper - lower) / mid * 100);
+  var lastPrice = sub[sub.length - 1].spotPrice;
+  var position = ((lastPrice - lower) / (upper - lower) * 100);
+  var assess;
+  if (position > 80) assess = '价格逼近布林上轨，超买区域，警悴回调';
+  else if (position < 20) assess = '价格逼近布林下轨，超卖区域，关注反弹';
+  else if (position > 50) assess = '价格在布林中轨上方，偏强震荡';
+  else assess = '价格在布林中轨下方，偏弱震荡';
+  return { mid: mid, upper: upper, lower: lower, width: width, position: position, assessment: assess };
+}
+function calcMACD(arr, fast, slow, signal) {
+  var sub = arr.slice(-Math.max(slow * 3, slow));
+  if (sub.length < Math.min(slow, 3)) return { dif: null, dea: null, macd: null, status: '数据积累中' };
+  var emaFast = sub[0].spotPrice;
+  var emaSlow = sub[0].spotPrice;
+  var kf = 2 / (fast + 1);
+  var ks = 2 / (slow + 1);
+  var difArr = [];
+  for (var i = 1; i < sub.length; i++) {
+    emaFast = sub[i].spotPrice * kf + emaFast * (1 - kf);
+    emaSlow = sub[i].spotPrice * ks + emaSlow * (1 - ks);
+    difArr.push(emaFast - emaSlow);
+  }
+  var dif = difArr[difArr.length - 1];
+  if (difArr.length < signal) return { dif: dif, dea: null, macd: null, status: 'DEA数据积累中' };
+  var dea = difArr[0];
+  var kd = 2 / (signal + 1);
+  var macdArr = [];
+  for (var i = 1; i < difArr.length; i++) {
+    dea = difArr[i] * kd + dea * (1 - kd);
+    macdArr.push((difArr[i] - dea) * 2);
+  }
+  var macd = macdArr[macdArr.length - 1];
+  var prevMacd = macdArr.length >= 2 ? macdArr[macdArr.length - 2] : null;
+  var status;
+  if (prevMacd !== null && macd > 0 && prevMacd <= 0) status = '金叉（MACD上穿零轴），看涨信号';
+  else if (prevMacd !== null && macd < 0 && prevMacd >= 0) status = '死叉（MACD下穿零轴），看跌信号';
+  else if (macd > 0 && prevMacd !== null && macd > prevMacd) status = 'MACD红柱放大，多头动能增强';
+  else if (macd > 0) status = 'MACD红柱缩小，多头动能减弱';
+  else if (macd < 0 && prevMacd !== null && macd < prevMacd) status = 'MACD绿柱放大，空头动能增强';
+  else status = 'MACD绿柱缩小，空头动能减弱';
+  return { dif: dif, dea: dea, macd: macd, status: status };
+}
 function calcMA(arr, days) {
   var sub = arr.slice(-days);
   if (sub.length < Math.min(days, 3)) return null;
   return sub.reduce(function(s, r) { return s + r.spotPrice; }, 0) / sub.length;
 }
+
+var ema5 = calcEMA(histData, 5);
+var ema20New = calcEMA(histData, 20);
+var ema60 = calcEMA(histData, 60);
+var boll = calcBOLL(histData, 20, 2);
+var macd = calcMACD(histData, 12, 26, 9);
+var emaAlignment;
+if (ema5 && ema20New && ema60) {
+  if (ema5 > ema20New && ema20New > ema60) emaAlignment = '多头排列（EMA5 > EMA20 > EMA60），趋势偏多';
+  else if (ema5 < ema20New && ema20New < ema60) emaAlignment = '空头排列（EMA5 < EMA20 < EMA60），趋势偏空';
+  else emaAlignment = 'EMA交织，趋势震荡';
+} else emaAlignment = '数据积累中';
+
 var ma5 = calcMA(histData, 5);
 var ma10 = calcMA(histData, 10);
 var ma20 = calcMA(histData, 20);
@@ -482,6 +558,21 @@ var output = {
   MA5_VALUE: ma5 ? '$' + ma5.toFixed(0) : '数据积累中',
   MA10_VALUE: ma10 ? '$' + ma10.toFixed(0) : '数据积累中',
   MA20_VALUE: ma20 ? '$' + ma20.toFixed(0) : '数据积累中（需20个交易日）',
+
+  EMA5_VALUE: ema5 ? D + ema5.toFixed(0) : '数据积累中',
+  EMA20_VALUE: ema20New ? D + ema20New.toFixed(0) : '数据积累中',
+  EMA60_VALUE: ema60 ? D + ema60.toFixed(0) : '数据积累中（需60个交易日）',
+  EMA_ALIGNMENT: emaAlignment,
+  BOLL_UPPER: boll.upper ? D + boll.upper.toFixed(0) : '数据积累中',
+  BOLL_MID: boll.mid ? D + boll.mid.toFixed(0) : '数据积累中',
+  BOLL_LOWER: boll.lower ? D + boll.lower.toFixed(0) : '数据积累中',
+  BOLL_WIDTH: boll.width ? boll.width.toFixed(1) + '%' : '数据积累中',
+  BOLL_POSITION: boll.position ? boll.position.toFixed(0) + '%' : '数据积累中',
+  BOLL_ASSESSMENT: boll.assessment || '数据积累中',
+  MACD_DIF: macd.dif ? macd.dif.toFixed(1) : '数据积累中',
+  MACD_DEA: macd.dea ? macd.dea.toFixed(1) : '数据积累中',
+  MACD_VALUE: macd.macd ? macd.macd.toFixed(1) : '数据积累中',
+  MACD_STATUS: macd.status || '数据积累中',
   MA_ALIGNMENT: maAlignment,
   PRICE_VS_MA20: priceVsMA20,
   RANGE_20D_LOW: '$' + range20LowStr,

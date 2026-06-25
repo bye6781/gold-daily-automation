@@ -37,6 +37,12 @@ const defaults = {
   DXY_VALUE: "待盘中更新", DXY_IMPACT: "待盘中更新",
   MA5_VALUE: "数据积累中", MA10_VALUE: "数据积累中",
   MA20_VALUE: "数据积累中（需20个交易日）",
+
+  EMA5_VALUE: '数据积累中', EMA20_VALUE: '数据积累中', EMA60_VALUE: '数据积累中（需60个交易日）',
+  EMA_ALIGNMENT: '数据积累中',
+  BOLL_UPPER: '数据积累中', BOLL_MID: '数据积累中', BOLL_LOWER: '数据积累中',
+  BOLL_WIDTH: '数据积累中', BOLL_POSITION: '数据积累中', BOLL_ASSESSMENT: '数据积累中',
+  MACD_DIF: '数据积累中', MACD_DEA: '数据积累中', MACD_VALUE: '数据积累中', MACD_STATUS: '数据积累中',
   MA_ALIGNMENT: "数据积累中", PRICE_VS_MA20: "数据积累中",
   RANGE_20D_LOW: "数据积累中", RANGE_20D_HIGH: "数据积累中",
 };
