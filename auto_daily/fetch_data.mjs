@@ -366,7 +366,7 @@ function calcBOLL(arr, period, mult) {
   var lastPrice = sub[sub.length - 1].spotPrice;
   var position = ((lastPrice - lower) / (upper - lower) * 100);
   var assess;
-  if (position > 80) assess = '价格逼近布林上轨，超买区域，警悴回调';
+  if (position > 80) assess = '价格逼近布林上轨，超买区域，警惕回调';
   else if (position < 20) assess = '价格逼近布林下轨，超卖区域，关注反弹';
   else if (position > 50) assess = '价格在布林中轨上方，偏强震荡';
   else assess = '价格在布林中轨下方，偏弱震荡';
@@ -422,7 +422,6 @@ if (ema5 && ema20New && ema60) {
   else if (ema5 < ema20New && ema20New < ema60) emaAlignment = '空头排列（EMA5 < EMA20 < EMA60），趋势偏空';
   else emaAlignment = 'EMA交织，趋势震荡';
 } else emaAlignment = '数据积累中';
-
 var ma5 = calcMA(histData, 5);
 var ma10 = calcMA(histData, 10);
 var ma20 = calcMA(histData, 20);
@@ -559,14 +558,13 @@ var output = {
   MA5_VALUE: ma5 ? '$' + ma5.toFixed(0) : '数据积累中',
   MA10_VALUE: ma10 ? '$' + ma10.toFixed(0) : '数据积累中',
   MA20_VALUE: ma20 ? '$' + ma20.toFixed(0) : '数据积累中（需20个交易日）',
-
-  EMA5_VALUE: ema5 ? D + ema5.toFixed(0) : '数据积累中',
-  EMA20_VALUE: ema20New ? D + ema20New.toFixed(0) : '数据积累中',
-  EMA60_VALUE: ema60 ? D + ema60.toFixed(0) : '数据积累中（需60个交易日）',
+  EMA5_VALUE: ema5 ? '$' + ema5.toFixed(0) : '数据积累中',
+  EMA20_VALUE: ema20New ? '$' + ema20New.toFixed(0) : '数据积累中',
+  EMA60_VALUE: ema60 ? '$' + ema60.toFixed(0) : '数据积累中（需60个交易日）',
   EMA_ALIGNMENT: emaAlignment,
-  BOLL_UPPER: boll.upper ? D + boll.upper.toFixed(0) : '数据积累中',
-  BOLL_MID: boll.mid ? D + boll.mid.toFixed(0) : '数据积累中',
-  BOLL_LOWER: boll.lower ? D + boll.lower.toFixed(0) : '数据积累中',
+  BOLL_UPPER: boll.upper ? '$' + boll.upper.toFixed(0) : '数据积累中',
+  BOLL_MID: boll.mid ? '$' + boll.mid.toFixed(0) : '数据积累中',
+  BOLL_LOWER: boll.lower ? '$' + boll.lower.toFixed(0) : '数据积累中',
   BOLL_WIDTH: boll.width ? boll.width.toFixed(1) + '%' : '数据积累中',
   BOLL_POSITION: boll.position ? boll.position.toFixed(0) + '%' : '数据积累中',
   BOLL_ASSESSMENT: boll.assessment || '数据积累中',
