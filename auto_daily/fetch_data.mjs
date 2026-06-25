@@ -353,12 +353,13 @@ function calcEMA(arr, days) {
 function calcBOLL(arr, period, mult) {
   var sub = arr.slice(-Math.max(period * 2, period));
   if (sub.length < Math.min(period, 3)) return { mid: null, upper: null, lower: null, width: null, position: null, assessment: '数据积累中' };
+  var startIdx = Math.max(0, sub.length - period);
   var sum = 0;
   for (var i = startIdx; i < sub.length; i++) sum += sub[i].spotPrice;
   var mid = sum / (sub.length - startIdx);
   var sqSum = 0;
   for (var i = startIdx; i < sub.length; i++) sqSum += Math.pow(sub[i].spotPrice - mid, 2);
-  var std = Math.sqrt(sqSum / period);
+  var std = Math.sqrt(sqSum / (sub.length - startIdx));
   var upper = mid + mult * std;
   var lower = mid - mult * std;
   var width = ((upper - lower) / mid * 100);
