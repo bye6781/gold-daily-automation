@@ -354,7 +354,7 @@ function calcBOLL(arr, period, mult) {
   var sub = arr.slice(-Math.max(period * 2, period));
   if (sub.length < Math.min(period, 3)) return { mid: null, upper: null, lower: null, width: null, position: null, assessment: '数据积累中' };
   var sum = 0;
-  for (var i = sub.length - period; i < sub.length; i++) sum += sub[i].spotPrice;
+  for (var i = startIdx; i < sub.length; i++) sum += sub[i].spotPrice;
   var mid = sum / (sub.length - startIdx);
   var sqSum = 0;
   for (var i = startIdx; i < sub.length; i++) sqSum += Math.pow(sub[i].spotPrice - mid, 2);
