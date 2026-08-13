@@ -457,5 +457,14 @@
     "closePrice": 4399.54,
     "dxy": 99.974,
     "usdCny": 7.28
+  },
+  {
+    "date": "2026-08-13",
+    "spotPrice": 4420.4,
+    "dayHigh": 4413.3,
+    "dayLow": 4406.6,
+    "closePrice": 4420.4,
+    "dxy": 100.7,
+    "usdCny": 7.28
   }
 ]
