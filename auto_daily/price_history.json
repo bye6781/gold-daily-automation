@@ -1,14 +1,5 @@
 [
   {
-    "date": "2026-09-06",
-    "spotPrice": 4425.5,
-    "dayHigh": 4481.3,
-    "dayLow": 4463.6,
-    "closePrice": 4425.5,
-    "dxy": 99.141,
-    "usdCny": 7.28
-  },
-  {
     "date": "2026-09-08",
     "spotPrice": 4352.78,
     "dayHigh": 4403.4,
@@ -537,6 +528,15 @@
     "dayLow": 4117.7,
     "closePrice": 4111.09,
     "dxy": 101.668,
+    "usdCny": 7.28
+  },
+  {
+    "date": "2026-11-11",
+    "spotPrice": 4049.65,
+    "dayHigh": 4051.2,
+    "dayLow": 4034.1,
+    "closePrice": 4049.65,
+    "dxy": 102.26,
     "usdCny": 7.28
   }
 ]
